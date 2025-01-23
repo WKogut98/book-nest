@@ -1,4 +1,5 @@
 <script lang="ts">
+    import {Button} from '$components';
     import heroImage from '$assets/hero.png';
 </script>
 
@@ -9,7 +10,7 @@
         <h4 class = "mt-l mb-s">
             Create your very own digital library where you can keep track of every book you own. Happy reading!
         </h4>
-        <button>Sign up</button>
+        <Button href={"https://www.wykop.pl"}>Sign up</Button>
     </div>
     <img class="hero-image" src={heroImage} alt="">
 </section>
@@ -27,7 +28,7 @@
     }
 
     .hero-text{
-        display: flex
+        display: flex;
         flex-direction: column;
         align-items: flex-start;
         width: 55%;
