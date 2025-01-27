@@ -12,8 +12,9 @@
 
     interface ButtonProps extends PropsBase
     {
-        onclick: (e: MouseEvent) => void;
+        onclick?: (e: MouseEvent) => void;
         href?: never;
+        type?: "button" | "submit";
     }
 
     interface LinkProps extends PropsBase
@@ -43,6 +44,9 @@
 {/if}
 
 <style>
+    a{
+        display: block;
+    }
     .btn
     {
         padding: 12px 24px;

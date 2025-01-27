@@ -10,7 +10,7 @@
         <h4 class = "mt-l mb-s">
             Create your very own digital library where you can keep track of every book you own. Happy reading!
         </h4>
-        <Button href={"https://www.wykop.pl"}>Sign up</Button>
+        <Button href="/register">Sign up</Button>
     </div>
     <img class="hero-image" src={heroImage} alt="">
 </section>
