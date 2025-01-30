@@ -1,16 +1,23 @@
 <script lang="ts">
+    import type { ActionData } from "../../routes/register/$types";
     import Button from "./Button.svelte";
 
     interface ComponentProps{
         isRegistration: boolean;
+        form: ActionData;
     }
-    let {isRegistration}: ComponentProps = $props();
+    let {isRegistration, form}: ComponentProps = $props();
     let title = isRegistration ? "Create Account" : "Log In";
 </script>
 <div class="auth-container default-margin">
     <h1 class = "mb-l">{title}</h1>
-    <div class="'form-and-social-login">
-        <form class = "auth-form">
+    <div class="form-and-social-login">
+        <form class = "auth-form" method="POST">
+            {#if form && form.errors?.length}
+            {#each form.errors as error}
+                <div class="auth-error">{error}</div>
+            {/each}
+            {/if}
             {#if isRegistration}
                 <input placeholder="Userame" type="text" name="username"/>
             {/if}
