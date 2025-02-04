@@ -15,7 +15,7 @@ interface RegisterReturnObject
 }
 
 export const actions = {
-    default: async ({request}) => {
+    default: async ({request, locals: {supabase}}) => {
         const formData = await request.formData();
 
         const username = formData.get("username") as string;
@@ -76,8 +76,6 @@ export const actions = {
             returnObject.success = false;
         }
 
-
-        const supabase = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
         const response = await supabase.auth.signUp({
             email: email,
             password: password
