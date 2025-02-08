@@ -8,41 +8,25 @@ function isVelidEmail(email: string): boolean {
 interface ReturnObject
 {
     success: boolean;
-    errors: string[];
-    username: string;
     email: string;
     password: string;
-    passwordConfirmation: string;
+    errors: string[];
+    passwordConfirmation?: never;
+    username?: never;
 }
 
 export const actions = {
     default: async ({request, locals: {supabase}}) => {
         const formData = await request.formData();
 
-        const username = formData.get("username") as string;
         const email = formData.get("email") as string;
         const password = formData.get("password") as string;
-        const passwordConfirmation = formData.get("passwordConfirmation") as string;
 
         const returnObject: ReturnObject ={
             success: true,
             email,
             password,
-            username,
-            passwordConfirmation,
             errors: []
-        }
-
-        if(!username.length)
-        {
-            returnObject.errors.push("Username is required.");
-            returnObject.success = false;
-        }
-
-        if(username.length && username.length < 3) 
-        {
-            returnObject.errors.push("Username must be at least 3 characters long.");
-            returnObject.success = false;
         }
 
         if(!email.length)
@@ -69,19 +53,7 @@ export const actions = {
             returnObject.success = false;
         }
 
-        if(!passwordConfirmation.length)
-        {
-            returnObject.errors.push("Password confirmation is required.");
-            returnObject.success = false;
-        }
-
-        if(password !== passwordConfirmation)
-        {
-            returnObject.errors.push("Passwords do not match.");
-            returnObject.success = false;
-        }
-
-        const response = await supabase.auth.signUp({
+        const response = await supabase.auth.signInWithPassword({
             email: email,
             password: password
         });
@@ -95,7 +67,7 @@ export const actions = {
 
         if(response && !response.data.user)
         {
-            returnObject.errors.push("An error occured while trying to login.");
+            returnObject.errors.push("An error occured while trying to register.");
             returnObject.success = false;
             return fail(400, returnObject as any)
         }
