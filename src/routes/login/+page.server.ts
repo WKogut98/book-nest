@@ -1,3 +1,4 @@
+import { PUBLIC_FRONTEND_URL } from "$env/static/public";
 import { fail, redirect } from "@sveltejs/kit";
 
 function isVelidEmail(email: string): boolean {
@@ -16,7 +17,7 @@ interface ReturnObject
 }
 
 export const actions = {
-    default: async ({request, locals: {supabase}}) => {
+    signInWithPassword: async ({request, locals: {supabase}}) => {
         const formData = await request.formData();
 
         const email = formData.get("email") as string;
@@ -75,5 +76,22 @@ export const actions = {
         redirect(303, "/private/dashboard");
 
         return returnObject;
+    },
+    googleLogin: async ({locals: {supabase}}) => {
+        const {data, error} = await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+                redirectTo: `${PUBLIC_FRONTEND_URL}/auth/callback`
+            }
+        });
+
+        if(error)
+        {
+            return fail(400, {message: "Something went wrong woih Google login."});
+        }
+        else
+        {
+            throw redirect(303, data.url);
+        }
     }
 }
