@@ -100,6 +100,12 @@ export const actions = {
             return fail(400, returnObject as any)
         }
 
+
+        await supabase.from("user_names").insert([
+            {user_id: response.data.user.id,
+            name: username}
+        ]);
+
         redirect(303, "/private/dashboard");
 
         return returnObject;

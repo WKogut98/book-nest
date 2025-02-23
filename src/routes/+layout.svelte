@@ -2,7 +2,7 @@
     import "./../app.css";
     import {Header} from "$components";
     import { invalidate } from '$app/navigation';
-    import {setUserState} from '$components/state/user-state.svelte'
+    import {setUserState} from '$lib/state/user-state.svelte'
 
     let { data, children } = $props();
     let { session, supabase, user } = $derived(data);
@@ -14,11 +14,9 @@
       supabase: data.supabase
     });
 
-    $effect(() => {
-      userState.updateState({session, user, supabase});
-    })
-
     $effect(() => {const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
+      userState.updateState({session: newSession, user: newSession?.user || null, supabase});
+
       if (newSession?.expires_at !== session?.expires_at) {
         invalidate('supabase:auth');
       }
