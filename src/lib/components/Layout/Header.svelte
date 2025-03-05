@@ -8,7 +8,7 @@
 </script>
 
 <header>
-    <a href="/">
+    <a href={user ? "/private/dashboard" : "/"}>
         <img class="logo" src={appLogo} alt="Go to home">
     </a>
     <nav>
