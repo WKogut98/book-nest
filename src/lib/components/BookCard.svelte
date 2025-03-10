@@ -1,6 +1,7 @@
 <script lang="ts">
     import type {Book} from "$lib/state/user-state.svelte";
     import { derived } from "svelte/store";
+    import {StarRating} from "$components";
     
 
     interface BookCardProps {
@@ -13,8 +14,9 @@
         book.finished_reading_on ? "Finished" : book.started_reading_on ? "Reading" : "Not started"
     );
     
+    function updateBookRating(book: Book) {
+    }
 </script>
-
 <a class="book-card" href={`/private/book/${book.id}`}>
 
     <div class="book-status">
@@ -28,7 +30,7 @@
     <div class="book-info">
         <h4>{book.title}</h4>
         <p class="mb-s">{book.author}</p>
-        <p>Rating: {book.rating}</p>
+        <p><StarRating isReadOnly={true} value={book.rating || 0}/></p>
     </div>
     
 </a>

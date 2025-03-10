@@ -6,7 +6,6 @@
     let userContext = getUserState();
     let {userName, allBooks} = $derived(userContext);
 
-    $inspect(allBooks);
 </script>
 
 <div class="dashboard">
