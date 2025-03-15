@@ -1,6 +1,5 @@
 <script lang="ts">
     import type {Book} from "$lib/state/user-state.svelte";
-    import { derived } from "svelte/store";
     import {StarRating} from "$components";
     
 

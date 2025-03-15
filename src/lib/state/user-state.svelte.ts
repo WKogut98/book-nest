@@ -46,6 +46,53 @@ export class UserState
         this.fetchUserData();
     }
 
+    getHighestRatedBooks()
+    {
+        return this.allBooks.filter((book) => book.rating && book.rating>=4)
+            .sort((a: Book, b: Book) => b.rating! - a.rating!)
+            .slice(0,9);
+    }
+
+    getNewestUnreadBooks()
+    {
+        return this.allBooks.filter((book) => !book.started_reading_on && !book.finished_reading_on)
+            .sort((a: Book, b: Book) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+            .slice(0,9);
+    }
+    getHighestRatedBooksFromFavoriteGenre(favoriteGenre : string)
+    {
+        return this.allBooks.filter((book) => book.rating && book.rating>=4 && book.genre.includes(favoriteGenre))
+            .sort((a: Book, b: Book) => b.rating! - a.rating!)
+            .slice(0,9);
+    }
+    getCurrentlyReadingBooks()
+    {
+        return this.allBooks.filter((book) => book.started_reading_on && !book.finished_reading_on)
+            .sort((a: Book, b: Book) => new Date(b.started_reading_on!).getTime() - new Date(a.started_reading_on!).getTime())
+            .slice(0,9);
+    }
+
+    getFavoriteGenre()
+    {
+        if(this.allBooks.length === 0) return null;
+        const genreCounts: {[key: string]: number} = {};
+        this.allBooks.forEach((book) => {
+            const genres = book.genre?.split(", ") || [];
+            genres.forEach((genre) => {
+                //const trimmedGenre = genre.trim();
+                if(genre)
+                {
+                    if(!genreCounts[genre]) genreCounts[genre] = 1;
+                    else genreCounts[genre]++;
+                }
+            });
+        });
+
+        console.log(genreCounts);
+
+        return Object.keys(genreCounts).reduce((a, b) => genreCounts[a] > genreCounts[b] ? a : b);
+    }
+
     async logout()
     {
         await this.supabase?.auth.signOut();

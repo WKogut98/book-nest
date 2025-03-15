@@ -1,10 +1,12 @@
 <script lang="ts">
     import { getUserState } from "$lib/state/user-state.svelte";
+    import type { Book } from "$lib/state/user-state.svelte";
     import Icon from "@iconify/svelte";
-    import {BookCard} from '$components';
+    import {BookCategory} from '$components';
 
     let userContext = getUserState();
     let {userName, allBooks} = $derived(userContext);
+    let favoriteGenre = $derived.by(()=>userContext.getFavoriteGenre());
 
 </script>
 
@@ -17,10 +19,12 @@
     <div class="headline">
         <h3 class="bold mb-xs">Welcome back, {userName}</h3>
     </div>
-    </div> 
-    {#each allBooks as book}
-        <BookCard {book}/>
-    {/each} 
+    </div>
+    <BookCategory books={userContext.getCurrentlyReadingBooks()} categoryName={"Currently reading"}/>
+    <BookCategory books={userContext.getHighestRatedBooks()} categoryName={"Your favorite Books"}/>
+    <BookCategory books={userContext.getNewestUnreadBooks()} categoryName={"Recently Added"}/>
+    <BookCategory books={userContext.getHighestRatedBooksFromFavoriteGenre(favoriteGenre)} 
+        categoryName={`From your favorite genre - ${favoriteGenre}`}/>
 </div>
 
 <style>
