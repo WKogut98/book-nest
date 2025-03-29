@@ -1,7 +1,8 @@
 <script lang="ts">
     import {Button, StarRating} from "$components";
-    import type { Book } from "$lib/state/user-state.svelte";
+    import { getUserState, type Book } from "$lib/state/user-state.svelte";
     import Icon from "@iconify/svelte";
+    import Dropzone from "svelte-file-dropzone";
 
     interface BookPageProps
     {
@@ -12,10 +13,21 @@
 
     let {data}:BookPageProps = $props();
     let book = $derived(data.book);
+    let userContext = getUserState();
 
     function goBack()
     {
         history.back();
+    }
+
+    async function handleDrop(e:CustomEvent<any>)
+    {
+        const {acceptedFiles} = e.detail;
+        if(acceptedFiles.length)
+        {
+            const file = acceptedFiles[0] as File;
+            await userContext.uploadBookCover(file, book.id);
+        }
     }
 </script>
 
@@ -55,10 +67,13 @@
             {#if book.cover_image}
             <img src={book.cover_image} alt=""/>
             {:else}
-            <button class="add-cover">
+            <Dropzone multiple={false} accept="image/*"
+                maxSize={5*1024*1024}
+                containerClasses = {"add-cover"}
+                on:drop={handleDrop}>
                 <Icon icon="akar-icons:plus" width="40"/>
                 <p>Add cover</p>
-            </button>
+            </Dropzone>
             {/if}
         </div>  
     </div>

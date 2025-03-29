@@ -93,6 +93,22 @@ export class UserState
         return Object.keys(genreCounts).reduce((a, b) => genreCounts[a] > genreCounts[b] ? a : b);
     }
 
+    async uploadBookCover(file: File, bookId: number)
+    {
+        if(!this.user || !this.supabase) return;
+
+        const filePath = `${this.user.id}/${new Date().getTime()}_${file.name}`;
+
+        const {error: uploadError} = await this.supabase.storage.from("book-covers").upload(filePath, file);
+        if(uploadError)
+        {
+           return console.log(uploadError);
+        }
+
+        const {data: {publicUrl}} = this.supabase.storage.from("book-covers").getPublicUrl(filePath);
+        await updateBook(bookId, {cover_image: publicUrl});
+    }
+
     async logout()
     {
         await this.supabase?.auth.signOut();
