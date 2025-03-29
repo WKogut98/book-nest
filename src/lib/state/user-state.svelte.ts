@@ -108,7 +108,7 @@ export class UserState
         }
 
         const {data: {publicUrl}} = this.supabase.storage.from("book-covers").getPublicUrl(filePath);
-        await updateBook(bookId, {cover_image: publicUrl});
+        await this.updateBook(bookId, {cover_image: publicUrl});
     }
 
     async logout()

@@ -30,6 +30,17 @@
     {
         const {acceptedFiles} = e.detail;
         if(acceptedFiles.length)
+        {
+            const file = acceptedFiles[0] as File;
+            await userContext.uploadBookCover(file, book.id);
+        }
+    }
+
+    async function toggleEditModeOrSave()
+    {
+        if(isEditMode)
+        {
+            await userContext.updateBook(book.id, {title, author, description, genre});
         }
         isEditMode = !isEditMode;
     }
@@ -55,7 +66,8 @@
 
 {#snippet statusButtons()}
 {#if !book.finished_reading_on}
-   {book.started_reading_on ? "I finished it" : "I've started reading it"}
+<Button isSecondary={true} onclick={updateReadingStatus}>
+    {book.started_reading_on ? "I finished it" : "I've started reading it"}
 </Button>
 {/if}
 {/snippet}
