@@ -2,6 +2,7 @@
     import {Button, StarRating} from "$components";
     import { getUserState, type Book } from "$lib/state/user-state.svelte";
     import Icon from "@iconify/svelte";
+    import Dropzone from "svelte-file-dropzone";
 
     interface BookPageProps
     {
@@ -25,11 +26,10 @@
         history.back();
     }
 
-    async function toggleEditModeOrSave()
+    async function handleDrop(e:CustomEvent<any>)
     {
-        if(isEditMode)
-        {
-            await userContext.updateBook(book.id, {title, author, description, genre});
+        const {acceptedFiles} = e.detail;
+        if(acceptedFiles.length)
         }
         isEditMode = !isEditMode;
     }
@@ -55,7 +55,6 @@
 
 {#snippet statusButtons()}
 {#if !book.finished_reading_on}
-<Button isSecondary={true} onclick={updateReadingStatus}>
    {book.started_reading_on ? "I finished it" : "I've started reading it"}
 </Button>
 {/if}
@@ -120,10 +119,13 @@
             {#if book.cover_image}
             <img src={book.cover_image} alt=""/>
             {:else}
-            <button class="add-cover">
+            <Dropzone multiple={false} accept="image/*"
+                maxSize={5*1024*1024}
+                containerClasses = {"add-cover"}
+                on:drop={handleDrop}>
                 <Icon icon="akar-icons:plus" width="40"/>
                 <p>Add cover</p>
-            </button>
+            </Dropzone>
             {/if}
         </div>  
     </div>
