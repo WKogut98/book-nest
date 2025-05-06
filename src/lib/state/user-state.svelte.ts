@@ -25,6 +25,12 @@ export interface Book
     user_id: string
 }
 
+export interface OpenAIBook
+{
+    author: string;
+    bookTitle: string;
+}
+
 type UpdatableBookFields = Omit<Book, "id" | "user_id" | "created_at">;
 
 export class UserState
@@ -124,6 +130,25 @@ export class UserState
         goto("/private/dashboard");
     }
 
+    async addBooksToLibrary(books: OpenAIBook[])
+    {
+        if(!this.supabase || !this.user) return;
+        const userID = this.user.id;
+        const processedBooks = books.map((book) => ({
+            title: book.bookTitle,
+            author: book.author,
+            user_id: userID,
+        }));
+
+        const {error} = await this.supabase.from("books").insert(processedBooks);
+        if(error)
+        {
+            throw new Error(error.message);
+            return;
+        }
+        this.fetchUserData();
+    }
+
     async logout()
     {
         await this.supabase?.auth.signOut();
@@ -152,6 +177,31 @@ export class UserState
         this.userName = userNamesResponse.data.name;
     }
 
+    async updateAccountData(email: string, userName: string)
+    {
+        if(!this.session) return;
+
+        try
+        {
+            const response = await fetch("/api/update-account", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${this.session.access_token}`
+                },
+                body: JSON.stringify({
+                    email,
+                    userName
+                })
+            });
+
+            if(response.ok) this.userName = userName;
+        }
+        catch(error)
+        {
+            console.log("Failed to update account data", error);
+        }
+    }
 
     getBookById(bookId: number)
     {
