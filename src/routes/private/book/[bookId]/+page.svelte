@@ -15,7 +15,6 @@
     let {data}:BookPageProps = $props();
     let book = $derived(userContext.getBookById(data.book.id) || data.book);
     let isEditMode = $state(false);
-    let showDeleteConfirmation = $state(false);
 
     let title = $state(data.book.title);
     let author = $state(data.book.author);
@@ -64,10 +63,12 @@
         await userContext.updateBook(book.id, {rating});
     }
 
-    function confirmDeleteBook()
+    function deleteBook()
     {
-        userContext.deleteBookFromLibrary(book.id);
-        showDeleteConfirmation = false;
+        const confirmDelete = window.confirm("Are you sure you want to delete this book?");
+        if (confirmDelete) {
+            userContext.deleteBookFromLibrary(book.id);
+        }    
     }
 </script>
 
@@ -131,7 +132,7 @@
             {/if}
             <div class="buttons-container mt-m">
                 <Button isSecondary={true} onclick={()=>toggleEditModeOrSave()}>{isEditMode? "Save Changes" : "Edit"}</Button>
-                <Button isDanger={true} onclick={()=>showDeleteConfirmation=true}>Delete from library</Button>
+                <Button isDanger={true} onclick={deleteBook}>Delete from library</Button>
             </div>
         </div>
         <div class="book-cover">
@@ -150,42 +151,7 @@
     </div>
 </div>
 
-<!-- Confirmation Popup -->
-{#if showDeleteConfirmation}
-<div class="popup-overlay">
-    <div class="popup">
-        <p class="mb-m">Are you sure you want to delete this book?</p>
-        <div class="popup-buttons">
-            <Button isDanger={true} onclick={confirmDeleteBook}>Yes, Delete</Button>
-            <Button isSecondary={true} onclick={() => (showDeleteConfirmation = false)}>Cancel</Button>
-        </div>
-    </div>
-</div>
-{/if}
-
 <style>
-    .popup-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-    .popup{
-        width: 30%;
-        height: 20%;
-        background: rgba(0, 0, 0, 0.7);
-        color: white;
-        border-radius: 15px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-    }
     .book-container
     {
         display: flex;

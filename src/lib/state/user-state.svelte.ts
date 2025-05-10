@@ -82,7 +82,7 @@ export class UserState
 
     getFavoriteGenre()
     {
-        if(this.allBooks.length === 0) return null;
+        if(this.allBooks.filter((book) => book.genre).length === 0) return null;
         const genreCounts: {[key: string]: number} = {};
         this.allBooks.forEach((book) => {
             const genres = book.genre?.split(", ") || [];
@@ -200,6 +200,30 @@ export class UserState
         catch(error)
         {
             console.log("Failed to update account data", error);
+        }
+    }
+
+    async deleteAccount()
+    {
+        if(!this.session) return;
+        try
+        {
+            const response = await fetch("api/delete-account", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${this.session.access_token}`
+                },
+            });
+            if(response.ok)
+            {
+                await this.logout();
+                goto("/");
+            }
+        }
+        catch(error)
+        {
+            console.log("Failed to delete account", error);
         }
     }
 

@@ -20,11 +20,23 @@
         <h3 class="bold mb-xs">Welcome back, {userName}</h3>
     </div>
     </div>
-    <BookCategory books={userContext.getCurrentlyReadingBooks()} categoryName={"Currently reading"}/>
-    <BookCategory books={userContext.getHighestRatedBooks()} categoryName={"Your favorite Books"}/>
-    <BookCategory books={userContext.getNewestUnreadBooks()} categoryName={"Recently Added"}/>
-    <BookCategory books={userContext.getHighestRatedBooksFromFavoriteGenre(favoriteGenre)} 
-        categoryName={`From your favorite genre - ${favoriteGenre}`}/>
+    {#if allBooks.length}
+        {#if userContext.getCurrentlyReadingBooks().length}
+            <BookCategory books={userContext.getCurrentlyReadingBooks()} categoryName={"Currently reading"}/>
+        {/if}
+        {#if userContext.getHighestRatedBooks().length}
+            <BookCategory books={userContext.getHighestRatedBooks()} categoryName={"Your favorite Books"}/>
+        {/if}
+        <BookCategory books={userContext.getNewestUnreadBooks()} categoryName={"Recently Added"}/>
+        {#if userContext.getFavoriteGenre()}
+            <BookCategory books={userContext.getHighestRatedBooksFromFavoriteGenre(favoriteGenre)} 
+                categoryName={`From your favorite genre - ${favoriteGenre}`}/>
+        {/if}
+    {:else}
+        <div class="upload-hint">
+            <h3>You have no books.</h3>
+        </div>
+    {/if}
 </div>
 
 <style>
